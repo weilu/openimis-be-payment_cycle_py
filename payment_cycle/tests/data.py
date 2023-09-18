@@ -37,7 +37,8 @@ payment_plan_payload = {
     'periodicity': 1,
     'json_ext': {
         'calculation_rule': {
-            'fixed_batch': 1500
+            'fixed_batch': 1500,
+            'limit_per_single_transaction': 100000,
         },
         'advanced_criteria': [
             {
