@@ -35,26 +35,8 @@ class PaymentCycleService(ABC):
         :param kwargs: Any arguments required to process the payment cycle. year and month are required
         :return: Dict containing status of a current payment cycle process run
         """
-        year, month = int(kwargs['year']), int(kwargs['month'])
-        logger.debug('payment cycle for period %s-%s', month, year)
-        if self._payment_cycle_entry_exists(**kwargs):
-            logger.debug('payment cycle for period %s-%s already processed, skipping', month, year)
-            self._output_exception('PaymentCycle already processed for %s-%s' % (month, year))
-
-        _, days_in_month = calendar.monthrange(year, month)
-        end_date = datetime.datetime(year, month, days_in_month)
-
         payment_cycle_entry = self._create_payment_cycle_entry(**kwargs)
-        logger.debug("payment cycle created entry: %s", payment_cycle_entry.id)
-
-        q = self._get_main_queryset(end_date, **kwargs)
-
-        logger.debug('Processing payment cycle %s-%s for %s entries', month, year, q.count())
-        entry_outputs = {}
-        for entry in q:
-            entry_output = self._process_main_queryset_entry(entry, payment_cycle_entry, end_date, **kwargs)
-            entry_outputs[str(entry.id)] = entry_output
-        return output_result_success(entry_outputs)
+        return output_result_success(payment_cycle_entry)
 
     @abstractmethod
     def _process_main_queryset_entry(self, entry: Union[HistoryModel, VersionedModel],
