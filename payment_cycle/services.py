@@ -6,6 +6,7 @@ from typing import Dict, Union, Any
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q, QuerySet
+from django.forms import model_to_dict
 
 from calculation.services import get_calculation_object
 from contribution_plan.models import PaymentPlan
@@ -36,7 +37,9 @@ class PaymentCycleService(ABC):
         :return: Dict containing status of a current payment cycle process run
         """
         payment_cycle_entry = self._create_payment_cycle_entry(**kwargs)
-        return output_result_success(payment_cycle_entry)
+        payment_cycle_dict = model_to_dict(payment_cycle_entry)
+        payment_cycle_dict = {**payment_cycle_dict, 'id': payment_cycle_entry.id}
+        return output_result_success(payment_cycle_dict)
 
     @abstractmethod
     def _process_main_queryset_entry(self, entry: Union[HistoryModel, VersionedModel],
