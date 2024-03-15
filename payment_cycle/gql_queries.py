@@ -13,8 +13,10 @@ class PaymentCycleGQLType(DjangoObjectType):
         interfaces = (graphene.relay.Node,)
         filter_fields = {
             "id": ["exact"],
-            "run_year": ["exact"],
-            "run_month": ["exact"],
+            "code": ["exact", "istartswith", "icontains", "iexact"],
+            "start_date": ["exact", "lt", "lte", "gt", "gte"],
+            "end_date": ["exact", "lt", "lte", "gt", "gte"],
+            "status": ["exact", "istartswith", "icontains", "iexact"],
             "type_id": ["exact"],
 
             "date_created": ["exact", "lt", "lte", "gt", "gte"],
