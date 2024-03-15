@@ -12,6 +12,10 @@ def generate_random_code():
     return ''.join(random.choice(characters) for _ in range(8))
 
 
+def get_default_date():
+    return date(1999, 6, 28)
+
+
 def get_date(year, month):
     first_day, last_day = monthrange(year, month)
     return date(year, month, first_day), date(year, month, last_day)
@@ -71,17 +75,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='paymentcycle',
             name='code',
-            field=models.CharField(max_length=255),
+            field=models.CharField(max_length=255, default=generate_random_code()),
         ),
         migrations.AddField(
             model_name='paymentcycle',
             name='start_date',
-            field=core.fields.DateField(),
+            field=core.fields.DateField(default=get_default_date()),
         ),
         migrations.AddField(
             model_name='paymentcycle',
             name='end_date',
-            field=core.fields.DateField(),
+            field=core.fields.DateField(default=get_default_date()),
         ),
         migrations.AddField(
             model_name='paymentcycle',
@@ -95,17 +99,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='historicalpaymentcycle',
             name='code',
-            field=models.CharField(max_length=255),
+            field=models.CharField(max_length=255, default=generate_random_code()),
         ),
         migrations.AddField(
             model_name='historicalpaymentcycle',
             name='start_date',
-            field=core.fields.DateField(),
+            field=core.fields.DateField(default=get_default_date()),
         ),
         migrations.AddField(
             model_name='historicalpaymentcycle',
             name='end_date',
-            field=core.fields.DateField(),
+            field=core.fields.DateField(default=get_default_date()),
         ),
         migrations.AddField(
             model_name='historicalpaymentcycle',
