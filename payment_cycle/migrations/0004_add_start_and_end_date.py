@@ -17,7 +17,8 @@ def get_default_date():
 
 
 def get_date(year, month):
-    first_day, last_day = monthrange(year, month)
+    first_day = 1
+    _, last_day = monthrange(year, month)
     return date(year, month, first_day), date(year, month, last_day)
 
 
