@@ -2,10 +2,10 @@ from core.services import BaseService
 from core.signals import register_service_signal
 from payment_cycle.models import PaymentCycle
 from payment_cycle.validations import PaymentCycleValidation
-from tasks_management.services import UpdateCheckerLogicServiceMixin
+from tasks_management.services import UpdateCheckerLogicServiceMixin, CreateCheckerLogicServiceMixin
 
 
-class PaymentCycleService(BaseService, UpdateCheckerLogicServiceMixin):
+class PaymentCycleService(BaseService, UpdateCheckerLogicServiceMixin, CreateCheckerLogicServiceMixin):
     OBJECT_TYPE = PaymentCycle
 
     def __init__(self, user, validation_class=PaymentCycleValidation):

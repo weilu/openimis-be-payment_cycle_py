@@ -23,6 +23,7 @@ class Query(graphene.ObjectType):
         dateValidTo__Lte=graphene.DateTime(),
         applyDefaultValidityFilter=graphene.Boolean(),
         search=graphene.String(),
+        client_mutation_id=graphene.String(),
     )
     payment_cycle_code_validity = graphene.Field(
         ValidationMessageGQLType,

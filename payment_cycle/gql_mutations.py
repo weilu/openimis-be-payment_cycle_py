@@ -6,7 +6,7 @@ from core.gql.gql_mutations.base_mutation import BaseHistoryModelCreateMutationM
     BaseHistoryModelUpdateMutationMixin
 from core.schema import OpenIMISMutation
 from payment_cycle.apps import PaymentCycleConfig
-from payment_cycle.models import PaymentCycle
+from payment_cycle.models import PaymentCycle, PaymentCycleMutation
 from payment_cycle.services import PaymentCycleService
 
 
@@ -15,6 +15,7 @@ class CreatePaymentCycleInput(OpenIMISMutation.Input):
         PENDING = PaymentCycle.PaymentCycleStatus.PENDING
         ACTIVE = PaymentCycle.PaymentCycleStatus.ACTIVE
         SUSPENDED = PaymentCycle.PaymentCycleStatus.SUSPENDED
+
     code = graphene.String(required=True)
     start_date = graphene.Date(required=True)
     end_date = graphene.Date(required=True)
@@ -37,10 +38,21 @@ class CreatePaymentCycleMutation(BaseHistoryModelCreateMutationMixin, BaseMutati
 
     @classmethod
     def _mutate(cls, user, **data):
-        data.pop('client_mutation_id', None)
+        client_mutation_id = data.pop('client_mutation_id', None)
         data.pop('client_mutation_label', None)
 
-        res = PaymentCycleService(user).create(data)
+        service = PaymentCycleService(user)
+        if (PaymentCycleConfig.gql_check_payment_cycle and
+                data["status"] == PaymentCycle.PaymentCycleStatus.ACTIVE):
+            res = service.create_create_task(data)
+        else:
+            res = service.create(data)
+            if client_mutation_id and res['success']:
+                payment_cycle_id = res['data']['id']
+                payment_cycle = PaymentCycle.objects.get(id=payment_cycle_id)
+                PaymentCycleMutation.object_mutated(
+                    user, client_mutation_id=client_mutation_id, payment_cycle=payment_cycle
+                )
         return res if not res['success'] else None
 
     class Input(CreatePaymentCycleInput):
@@ -60,14 +72,20 @@ class UpdatePaymentCycleMutation(BaseHistoryModelUpdateMutationMixin, BaseMutati
 
     @classmethod
     def _mutate(cls, user, **data):
-        data.pop('client_mutation_id', None)
+        client_mutation_id = data.pop('client_mutation_id', None)
         data.pop('client_mutation_label', None)
 
         service = PaymentCycleService(user)
-        if PaymentCycleConfig.gql_check_payment_cycle_update:
+        if PaymentCycleConfig.gql_check_payment_cycle:
             res = service.create_update_task(data)
         else:
             res = service.update(data)
+        if client_mutation_id and res['success']:
+            payment_cycle_id = data["id"]
+            payment_cycle = PaymentCycle.objects.get(id=payment_cycle_id)
+            PaymentCycleMutation.object_mutated(
+                user, client_mutation_id=client_mutation_id, payment_cycle=payment_cycle
+            )
         return res if not res['success'] else None
 
     class Input(UpdatePaymentCycleInput):

@@ -7,7 +7,7 @@ DEFAULT_CONFIG = {
     'gql_create_payment_cycle_perms': ['200002'],
     'gql_update_payment_cycle_perms': ['200003'],
     'gql_delete_payment_cycle_perms': ['200004'],
-    'gql_check_payment_cycle_update': True,
+    'gql_check_payment_cycle': True,
 }
 
 
@@ -19,7 +19,7 @@ class PaymentCycleConfig(AppConfig):
     gql_create_payment_cycle_perms = None
     gql_update_payment_cycle_perms = None
     gql_delete_payment_cycle_perms = None
-    gql_check_payment_cycle_update = None
+    gql_check_payment_cycle = None
 
     def ready(self):
         from core.models import ModuleConfiguration
