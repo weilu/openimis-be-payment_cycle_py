@@ -5,7 +5,7 @@ from django.test import TestCase
 from payment_cycle.models import PaymentCycle
 from payment_cycle.tests.data import  service_add_payload, service_update_payload
 from payment_cycle.services import PaymentCycleService
-from payment_cycle.tests.helpers import LogInHelper
+from core.test_helpers import LogInHelper
 
 
 class PaymentCycleServiceTests(TestCase):
